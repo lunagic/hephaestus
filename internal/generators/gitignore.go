@@ -37,7 +37,16 @@ func (generator GitIgnore) Output(s *state.State) error {
 		generator.file.Sections = append(generator.file.Sections, &formats.GitIgnoreSection{
 			Title: "Go",
 			Items: []string{
-				"__debug_bin",
+				"__debug_bin*",
+			},
+		})
+	}
+
+	if s.NPM.Enabled() {
+		generator.file.Sections = append(generator.file.Sections, &formats.GitIgnoreSection{
+			Title: "npm",
+			Items: []string{
+				"/node_modules/",
 			},
 		})
 	}

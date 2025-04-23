@@ -24,7 +24,6 @@ func (generator Makefile) Output(s *state.State) error {
 		Variables: []string{
 			"SHELL=/bin/bash -o pipefail",
 			"$(shell git config core.hooksPath ops/git-hooks)",
-			fmt.Sprintf("PROJECT_NAME=%s", projectName),
 		},
 	}
 

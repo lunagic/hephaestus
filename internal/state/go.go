@@ -12,7 +12,7 @@ import (
 func NewGo() (*Go, error) {
 	file, err := os.Open("go.mod")
 	if err != nil {
-		return nil, err
+		return &Go{}, nil
 	}
 
 	fileBytes, err := io.ReadAll(file)
