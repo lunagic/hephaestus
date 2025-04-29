@@ -51,8 +51,8 @@ func (p PackageJSON) SetScript(name string, script string) {
 	scripts, _ := p["scripts"].(map[string]any)
 	scripts[name] = script
 
-	p.WriteToDisk()
-	p.ReadFromDisk()
+	_ = p.WriteToDisk()
+	_ = p.ReadFromDisk()
 }
 
 func (p PackageJSON) HasPackage(packageName string) bool {

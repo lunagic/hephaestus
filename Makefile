@@ -1,8 +1,7 @@
-.PHONY: full clean lint lint-go fix fix-go test test-go build build-go watch docs-go
+.PHONY: full clean lint lint-go fix fix-go test test-go build build-go dev-go watch docs-go
 
 SHELL=/bin/bash -o pipefail
 $(shell git config core.hooksPath ops/git-hooks)
-PROJECT_NAME=hephaestus
 GO_PATH := $(shell go env GOPATH 2> /dev/null)
 PATH := /usr/local/bin:$(GO_PATH)/bin:$(PATH)
 
@@ -16,8 +15,9 @@ clean:
 lint: lint-go
 
 lint-go:
+	@go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.5
 	go mod tidy
-	go tool golangci-lint run ./...
+	golangci-lint run ./...
 
 ## Fix the project
 fix: fix-go
@@ -43,6 +43,9 @@ build-go:
 	go generate
 	go build -ldflags='-s -w' -o tmp/build/hephaestus .
 	go install .
+
+dev-go:
+	go run .
 
 ## Watch the project
 watch:

@@ -1,11 +1,28 @@
 package state
 
+import (
+	"os"
+
+	"gopkg.in/yaml.v2"
+)
+
 func NewHephaestus() (*Hephaestus, error) {
-	return &Hephaestus{}, nil
+	hephaestusConfigFile, err := os.Open(".config/hephaestus.yaml")
+	if err != nil {
+		return &Hephaestus{}, nil
+	}
+
+	hephaestusConfig := &Hephaestus{}
+	if err := yaml.NewDecoder(hephaestusConfigFile).Decode(hephaestusConfig); err != nil {
+		return nil, err
+	}
+
+	return hephaestusConfig, nil
 }
 
 type Hephaestus struct {
-	DefaultPort int
+	DefaultPort int      `yaml:"default_port"`
+	Gitignore   []string `yaml:"gitignore"`
 }
 
 func (hephaestus *Hephaestus) GitCleanExcludes() []string {

@@ -81,12 +81,12 @@ func (generator Makefile) Output(s *state.State) error {
 		}
 
 		if s.Go.Enabled() {
-			s.Go.InstallTool("github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55")
 			localTarget := &formats.MakefileTarget{
 				Name: "lint-go",
 				Commands: []string{
+					"@go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.5",
 					"go mod tidy",
-					"go tool golangci-lint run ./...",
+					"golangci-lint run ./...",
 				},
 			}
 
@@ -208,6 +208,31 @@ func (generator Makefile) Output(s *state.State) error {
 		}
 	}
 
+	{ // Dev Targets
+
+		if s.NPM.Enabled() {
+			localTarget := &formats.MakefileTarget{
+				Name: "dev-npm",
+				BeforeTargets: []string{
+					"build-npm",
+				},
+			}
+
+			m.Targets = append(m.Targets, localTarget)
+		}
+
+		if s.Go.Enabled() && (s.Go.AbleToBuild() || s.Hephaestus.HTTPEnabled()) {
+			localTarget := &formats.MakefileTarget{
+				Name: "dev-go",
+				Commands: []string{
+					"go run .",
+				},
+			}
+
+			m.Targets = append(m.Targets, localTarget)
+		}
+	}
+
 	{ // Watch Targets
 		parentTarget := &formats.MakefileTarget{
 			Comment:       "Watch the project",
@@ -216,26 +241,39 @@ func (generator Makefile) Output(s *state.State) error {
 		}
 		m.Targets = append(m.Targets, parentTarget)
 
-		if s.NPM.Enabled() && s.NPM.HasScript("watch") {
-			localTarget := &formats.MakefileTarget{
-				Name: "watch-npm",
-				Commands: []string{
-					"npm install",
-					"npm run watch",
-				},
-			}
+		if s.NPM.Enabled() {
 
-			m.Targets = append(m.Targets, localTarget)
-			parentTarget.BeforeTargets = append(parentTarget.BeforeTargets, localTarget.Name)
+			if s.Go.Enabled() {
+				localTarget := &formats.MakefileTarget{
+					Name: "watch-npm",
+					Commands: []string{
+						"npm install",
+						"hera frontend",
+					},
+				}
+
+				m.Targets = append(m.Targets, localTarget)
+				parentTarget.BeforeTargets = append(parentTarget.BeforeTargets, localTarget.Name)
+			} else if s.NPM.HasScript("watch") {
+				localTarget := &formats.MakefileTarget{
+					Name: "watch-npm",
+					Commands: []string{
+						"npm install",
+						"npm run watch",
+					},
+				}
+
+				m.Targets = append(m.Targets, localTarget)
+				parentTarget.BeforeTargets = append(parentTarget.BeforeTargets, localTarget.Name)
+			}
 		}
 
 		if s.Go.Enabled() && s.Go.AbleToBuild() && s.Hephaestus.HTTPEnabled() {
-			s.Go.InstallTool("github.com/mitranim/gow@latest")
 
 			localTarget := &formats.MakefileTarget{
 				Name: "watch-go",
 				Commands: []string{
-					"go tool gow run .",
+					"hera backend",
 				},
 			}
 
@@ -244,12 +282,18 @@ func (generator Makefile) Output(s *state.State) error {
 		}
 
 		if len(parentTarget.BeforeTargets) > 0 {
+			watchCommand := fmt.Sprintf(
+				"make -j%d %s",
+				len(parentTarget.BeforeTargets),
+				strings.Join(parentTarget.BeforeTargets, " "),
+			)
+
+			if s.Go.Enabled() {
+				watchCommand = "hera"
+			}
+
 			parentTarget.Commands = []string{
-				fmt.Sprintf(
-					"make -j%d %s",
-					len(parentTarget.BeforeTargets),
-					strings.Join(parentTarget.BeforeTargets, " "),
-				),
+				watchCommand,
 			}
 			parentTarget.BeforeTargets = []string{}
 		}

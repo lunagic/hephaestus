@@ -25,7 +25,7 @@ func (b GitIgnore) Build(w io.Writer) error {
 			_, _ = w.Write([]byte("\n"))
 		}
 
-		_, _ = w.Write([]byte(fmt.Sprintf("# %s\n", section.Title)))
+		_, _ = w.Write(fmt.Appendf(nil, "# %s\n", section.Title))
 		_, _ = w.Write([]byte(strings.Join(section.Items, "\n")))
 		_, _ = w.Write([]byte("\n"))
 	}

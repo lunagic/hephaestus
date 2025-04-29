@@ -45,7 +45,7 @@ func (g *Go) InstallTool(path string) {
 			return
 		}
 	}
-	utils.ShellExec("go", "get", "-tool", path)
+	_ = utils.ShellExec("go", "get", "-tool", path)
 }
 
 func (s *Go) AbleToBuild() bool {

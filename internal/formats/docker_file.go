@@ -18,7 +18,7 @@ type DockerStage struct {
 func (b Dockerfile) Build(w io.Writer) error {
 	for i, stage := range b.Stages {
 		if stage.Comment != "" {
-			if _, err := w.Write([]byte(fmt.Sprintf("## %s\n", stage.Comment))); err != nil {
+			if _, err := w.Write(fmt.Appendf(nil, "## %s\n", stage.Comment)); err != nil {
 				return err
 			}
 		}
@@ -32,7 +32,7 @@ func (b Dockerfile) Build(w io.Writer) error {
 				command = stage.CopyCommand
 			}
 
-			if _, err := w.Write([]byte(fmt.Sprintf("%s\n", command))); err != nil {
+			if _, err := w.Write(fmt.Appendf(nil, "%s\n", command)); err != nil {
 				return err
 			}
 		}

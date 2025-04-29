@@ -43,12 +43,23 @@ func (generator GitIgnore) Output(s *state.State) error {
 	}
 
 	if s.NPM.Enabled() {
+		npmIgnores := []string{
+			"/node_modules/",
+		}
+
+		if s.NPM.HasDependency("next") {
+			npmIgnores = append(
+				npmIgnores,
+				"out",
+				".next",
+				"next-env.d.ts",
+			)
+		}
 		generator.file.Sections = append(generator.file.Sections, &formats.GitIgnoreSection{
 			Title: "npm",
-			Items: []string{
-				"/node_modules/",
-			},
+			Items: npmIgnores,
 		})
+
 	}
 
 	file, err := os.Create(".gitignore")
