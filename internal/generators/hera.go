@@ -4,12 +4,11 @@ import (
 	"os"
 
 	"github.com/lunagic/hephaestus/internal/state"
+	"github.com/lunagic/hephaestus/internal/utils"
 	"github.com/lunagic/hera/hera"
-	"gopkg.in/yaml.v3"
 )
 
-type Hera struct {
-}
+type Hera struct{}
 
 func (generator Hera) Output(s *state.State) error {
 	heraConfig := hera.Config{
@@ -62,8 +61,8 @@ func (generator Hera) Output(s *state.State) error {
 		return err
 	}
 
-	if err := yaml.NewEncoder(heraConfigFile).Encode(heraConfig); err != nil {
-		return err
+	if err := utils.YAML(heraConfigFile, heraConfig); err != nil {
+		return nil
 	}
 
 	return nil

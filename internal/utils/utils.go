@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
+
+	"gopkg.in/yaml.v3"
 )
 
 func ShellExec(name string, arg ...string) error {
@@ -44,4 +46,10 @@ func WriteJSON(v any, w io.Writer) error {
 	encoder.SetEscapeHTML(false)
 	encoder.SetIndent("", "\t")
 	return encoder.Encode(v)
+}
+
+func YAML(writer io.Writer, payload any) error {
+	encoder := yaml.NewEncoder(writer)
+	encoder.SetIndent(2)
+	return encoder.Encode(payload)
 }
