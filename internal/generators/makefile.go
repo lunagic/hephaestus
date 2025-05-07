@@ -153,16 +153,15 @@ func (generator Makefile) Output(s *state.State) error {
 		}
 
 		if s.Go.Enabled() {
-			s.Go.InstallTool("github.com/boumenot/gocover-cobertura@latest")
-
 			localTarget := &formats.MakefileTarget{
 				Name: "test-go",
 				Commands: []string{
+					"@go install github.com/boumenot/gocover-cobertura@latest",
 					"@mkdir -p tmp/coverage/go/",
 					"go test -cover -coverprofile tmp/coverage/go/profile.txt ./...",
 					`@go tool cover -func tmp/coverage/go/profile.txt | awk '/^total/{print $$1 " " $$3}'`,
 					"@go tool cover -html tmp/coverage/go/profile.txt -o tmp/coverage/go/coverage.html",
-					"@go tool gocover-cobertura < tmp/coverage/go/profile.txt > tmp/coverage/go/cobertura-coverage.xml",
+					"@gocover-cobertura < tmp/coverage/go/profile.txt > tmp/coverage/go/cobertura-coverage.xml",
 				},
 			}
 
@@ -301,13 +300,13 @@ func (generator Makefile) Output(s *state.State) error {
 
 	{ // Clean Target
 		if s.Go.Enabled() {
-			s.Go.InstallTool("golang.org/x/tools/cmd/godoc@latest")
 			m.Targets = append(m.Targets, &formats.MakefileTarget{
 				Comment: "Run the docs server for the project",
 				Name:    "docs-go",
 				Commands: []string{
+					"@go install golang.org/x/tools/cmd/godoc@latest",
 					fmt.Sprintf(`@echo "listening on http://127.0.0.1:6060/pkg/%s"`, s.Go.Path()),
-					`@go tool godoc -http=127.0.0.1:6060`,
+					`@godoc -http=127.0.0.1:6060`,
 				},
 			})
 		}
