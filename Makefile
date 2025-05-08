@@ -30,7 +30,7 @@ fix-go:
 test: test-go
 
 test-go:
-	go install github.com/boumenot/gocover-cobertura@latest
+	@go install github.com/boumenot/gocover-cobertura@latest
 	@mkdir -p tmp/coverage/go/
 	go test -cover -coverprofile tmp/coverage/go/profile.txt ./...
 	@go tool cover -func tmp/coverage/go/profile.txt | awk '/^total/{print $$1 " " $$3}'
@@ -46,7 +46,7 @@ build-go:
 	go install .
 
 dev-go:
-	go run .
+	go run . | jq
 
 ## Watch the project
 watch:

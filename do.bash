@@ -2,13 +2,12 @@
 set -Eeuo pipefail
 
 PROJECTS=(
-	"$HOME/Projects/aaronellington/clubhouse"
 	"$HOME/Projects/lunagic/hermes"
 	"$HOME/Projects/lunagic/hera"
 	"$HOME/Projects/lunagic/hephaestus"
 	"$HOME/Projects/lunagic/poseidon"
 	"$HOME/Projects/lunagic/athena"
-	"$HOME/Projects/lunagic/time-ts"
+	"$HOME/Projects/lunagic/prometheus"
 	"$HOME/Projects/lunagic/environment-go"
 	"$HOME/Projects/lunagic/typescript-go"
 	"$HOME/Projects/aaronellington/dotfiles"

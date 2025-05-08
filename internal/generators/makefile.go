@@ -208,8 +208,7 @@ func (generator Makefile) Output(s *state.State) error {
 	}
 
 	{ // Dev Targets
-
-		if s.NPM.Enabled() {
+		if s.NPM.Enabled() && s.NPM.HasScript("build") {
 			localTarget := &formats.MakefileTarget{
 				Name: "dev-npm",
 				BeforeTargets: []string{
@@ -224,7 +223,7 @@ func (generator Makefile) Output(s *state.State) error {
 			localTarget := &formats.MakefileTarget{
 				Name: "dev-go",
 				Commands: []string{
-					"go run .",
+					"go run . | jq",
 				},
 			}
 

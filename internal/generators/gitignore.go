@@ -34,17 +34,32 @@ func (generator GitIgnore) Output(s *state.State) error {
 	})
 
 	if s.Go.Enabled() {
+		goItems := []string{
+			"__debug_bin*",
+		}
+
+		if _, err := os.Open(".goreleaser.yaml"); err == nil {
+			goItems = append(goItems,
+				"dist",
+			)
+		}
+
 		gitignore.Sections = append(gitignore.Sections, &formats.GitIgnoreSection{
 			Title: "Go",
-			Items: []string{
-				"__debug_bin*",
-			},
+			Items: goItems,
 		})
 	}
 
 	if s.NPM.Enabled() {
 		npmIgnores := []string{
 			"/node_modules/",
+		}
+
+		if s.NPM.HasDependency("typescript") {
+			npmIgnores = append(
+				npmIgnores,
+				"tsconfig.tsbuildinfo",
+			)
 		}
 
 		if s.NPM.HasDependency("next") {
@@ -55,6 +70,7 @@ func (generator GitIgnore) Output(s *state.State) error {
 				"next-env.d.ts",
 			)
 		}
+
 		gitignore.Sections = append(gitignore.Sections, &formats.GitIgnoreSection{
 			Title: "npm",
 			Items: npmIgnores,

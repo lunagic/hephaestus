@@ -56,6 +56,9 @@ func (generator Hera) Output(s *state.State) error {
 		return nil
 	}
 
+	if err := os.MkdirAll(".config", 0755); err != nil {
+		return err
+	}
 	heraConfigFile, err := os.Create(".config/hera.yaml")
 	if err != nil {
 		return err
