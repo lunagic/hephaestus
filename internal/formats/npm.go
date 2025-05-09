@@ -62,6 +62,11 @@ func (p PackageJSON) HasPackage(packageName string) bool {
 		return true
 	}
 
+	peerDependencies, _ := p["peerDependencies"].(map[string]any)
+	if _, found := peerDependencies[packageName]; found {
+		return true
+	}
+
 	devDependencies, _ := p["devDependencies"].(map[string]any)
 	if _, found := devDependencies[packageName]; found {
 		return true
