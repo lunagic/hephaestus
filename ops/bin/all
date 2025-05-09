@@ -26,5 +26,6 @@ for PROJECT in "${PROJECTS[@]}" ; do
 	echo =========================================================================
 	pwd
 	hephaestus
+	git push
 	git status
 done
