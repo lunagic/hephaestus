@@ -15,7 +15,7 @@ func (generator Hera) Output(s *state.State) error {
 		Services: map[string]*hera.Service{},
 	}
 
-	if s.Go.Enabled() && s.Hephaestus.HTTPEnabled() {
+	if s.Go.Enabled() && s.Go.AbleToBuild() && s.Hephaestus.HTTPEnabled() {
 		heraConfig.Services["backend"] = &hera.Service{
 			Command: "make dev-go",
 			Watch: []string{
