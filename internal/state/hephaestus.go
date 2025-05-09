@@ -21,8 +21,9 @@ func NewHephaestus() (*Hephaestus, error) {
 }
 
 type Hephaestus struct {
-	DefaultPort int      `yaml:"default_port"`
-	Gitignore   []string `yaml:"gitignore"`
+	DefaultPort    int                 `yaml:"default_port"`
+	Gitignore      []string            `yaml:"gitignore"`
+	HeraWatchPaths map[string][]string `yaml:"hera_watch_paths"`
 }
 
 func (hephaestus *Hephaestus) GitCleanExcludes() []string {

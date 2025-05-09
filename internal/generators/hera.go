@@ -15,29 +15,48 @@ func (generator Hera) Output(s *state.State) error {
 		Services: map[string]*hera.Service{},
 	}
 
+	fileChecker := func(paths []string, filePath string) []string {
+		if _, err := os.Open(filePath); err == nil {
+			paths = append(paths, filePath)
+		}
+
+		return paths
+	}
+
 	if s.Go.Enabled() && s.Go.AbleToBuild() && s.Hephaestus.HTTPEnabled() {
+		watchPaths := []string{
+			".env",
+			".env.local",
+		}
+
+		watchPaths = fileChecker(watchPaths, "Makefile")
+		watchPaths = fileChecker(watchPaths, "go.mod")
+		watchPaths = fileChecker(watchPaths, "go.sum")
+		watchPaths = fileChecker(watchPaths, "main.go")
+
+		watchPaths = append(watchPaths, s.Hephaestus.HeraWatchPaths["backend"]...)
+
 		heraConfig.Services["backend"] = &hera.Service{
 			Command: "make dev-go",
-			Watch: []string{
-				"Makefile",
-				"go.mod",
-				"main.go",
-				".env.local",
-			},
+			Watch:   watchPaths,
 			Exclude: []string{},
 		}
 	}
 
 	if s.NPM.Enabled() && s.Hephaestus.HTTPEnabled() {
+		watchPaths := []string{}
+		watchPaths = fileChecker(watchPaths, "Makefile")
+		watchPaths = fileChecker(watchPaths, "package.json")
+		watchPaths = fileChecker(watchPaths, "package-lock.json")
+		watchPaths = fileChecker(watchPaths, "tsconfig.json")
+		watchPaths = fileChecker(watchPaths, "vite.config.ts")
+		watchPaths = fileChecker(watchPaths, "main.tsx")
+
+		watchPaths = append(watchPaths, s.Hephaestus.HeraWatchPaths["frontend"]...)
+
 		heraConfig.Services["frontend"] = &hera.Service{
 			Command: "make dev-npm",
-			Watch: []string{
-				"Makefile",
-				"package.json",
-				"package-lock.json",
-				"tsconfig.json",
-				"vite.config.ts",
-			},
+			Watch:   watchPaths,
 			Exclude: []string{},
 		}
 	}
