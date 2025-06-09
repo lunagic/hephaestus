@@ -77,6 +77,13 @@ func (generator GitIgnore) Output(s *state.State) error {
 		})
 	}
 
+	if len(s.Hephaestus.Gitignore) > 0 {
+		gitignore.Sections = append(gitignore.Sections, &formats.GitIgnoreSection{
+			Title: "Project Specific",
+			Items: s.Hephaestus.Gitignore,
+		})
+	}
+
 	file, err := os.Create(".gitignore")
 	if err != nil {
 		return err
