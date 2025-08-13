@@ -297,6 +297,35 @@ func (generator Makefile) Output(s *state.State) error {
 		}
 	}
 
+	{ // Docker
+		if s.Hephaestus.DockerImage != "" {
+			m.Targets = append(m.Targets, &formats.MakefileTarget{
+				Name: "docker-build",
+				Commands: []string{
+					fmt.Sprintf(
+						"docker build -t '%s:latest' .",
+						s.Hephaestus.DockerImage,
+					),
+				},
+			})
+
+			m.Targets = append(m.Targets, &formats.MakefileTarget{
+				Name: "docker-test",
+				BeforeTargets: []string{
+					"docker-build",
+				},
+				Commands: []string{
+					fmt.Sprintf(
+						"docker run --rm -it -p %d:%d/tcp %s:latest",
+						s.Hephaestus.DefaultPort,
+						s.Hephaestus.DefaultPort,
+						s.Hephaestus.DockerImage,
+					),
+				},
+			})
+		}
+	}
+
 	{ // Clean Target
 		if s.Go.Enabled() {
 			m.Targets = append(m.Targets, &formats.MakefileTarget{

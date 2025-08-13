@@ -36,6 +36,20 @@ func (p PackageJSON) WriteToDisk() error {
 	return utils.WriteJSON(p, file)
 }
 
+func (p PackageJSON) NodeVersion() string {
+	latestLTS := "24"
+	return p.version("node", latestLTS)
+}
+
+func (p PackageJSON) version(key string, defaultVersion string) string {
+	engine, _ := p["engines"].(map[string]any)
+	engineString, ok := engine[key].(string)
+	if !ok || engineString == "" {
+		return defaultVersion
+	}
+	return engineString
+}
+
 func (p PackageJSON) GetScript(name string) string {
 	scripts, _ := p["scripts"].(map[string]any)
 
@@ -56,7 +70,6 @@ func (p PackageJSON) SetScript(name string, script string) {
 }
 
 func (p PackageJSON) HasPackage(packageName string) bool {
-
 	dependencies, _ := p["dependencies"].(map[string]any)
 	if _, found := dependencies[packageName]; found {
 		return true

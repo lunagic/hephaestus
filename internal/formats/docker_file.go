@@ -10,9 +10,11 @@ type Dockerfile struct {
 }
 
 type DockerStage struct {
-	Comment     string
-	Commands    []string
-	CopyCommand string
+	Comment  string
+	Image    string
+	Tag      string
+	Name     string
+	Commands []string
 }
 
 func (b Dockerfile) Build(w io.Writer) error {
@@ -23,15 +25,17 @@ func (b Dockerfile) Build(w io.Writer) error {
 			}
 		}
 
+		nameOutput := ""
+		if stage.Name != "" {
+			nameOutput = fmt.Sprintf(" AS %s", stage.Name)
+		}
+		if _, err := fmt.Fprintf(w,
+			"FROM %s:%s%s\n", stage.Image, stage.Tag, nameOutput,
+		); err != nil {
+			return err
+		}
+
 		for _, command := range stage.Commands {
-			if command == "## COPY_PLACEHOLDER" {
-				if stage.CopyCommand == "" {
-					continue
-				}
-
-				command = stage.CopyCommand
-			}
-
 			if _, err := w.Write(fmt.Appendf(nil, "%s\n", command)); err != nil {
 				return err
 			}

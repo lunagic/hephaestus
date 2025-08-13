@@ -30,6 +30,10 @@ func (s *NPM) Enabled() bool {
 	return s.packageJSON.ReadFromDisk() == nil
 }
 
+func (s *NPM) Version() string {
+	return s.packageJSON.NodeVersion()
+}
+
 func (s *NPM) HasScript(script string) bool {
 	return s.packageJSON.GetScript(script) != ""
 }
