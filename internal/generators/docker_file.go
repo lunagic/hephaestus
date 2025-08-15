@@ -11,6 +11,10 @@ import (
 type Dockerfile struct{}
 
 func (generator Dockerfile) Output(s *state.State) error {
+	if s.Hephaestus.DockerImage == "" {
+		return nil
+	}
+
 	dockerfile := formats.Dockerfile{}
 
 	frontendCopyCommands := []string{}
@@ -85,10 +89,6 @@ func (generator Dockerfile) Output(s *state.State) error {
 				fmt.Sprintf("EXPOSE %d", s.Hephaestus.DefaultPort),
 			},
 		})
-	}
-
-	if len(dockerfile.Stages) == 0 {
-		return nil
 	}
 
 	file, err := os.Create("Dockerfile")
