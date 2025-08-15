@@ -43,7 +43,7 @@ func (generator Hera) Output(s *state.State) error {
 		}
 	}
 
-	if s.NPM.Enabled() && s.Hephaestus.HTTPEnabled() {
+	if s.Node.Enabled() && s.Hephaestus.HTTPEnabled() {
 		watchPaths := []string{}
 		watchPaths = fileChecker(watchPaths, "Makefile")
 		watchPaths = fileChecker(watchPaths, "package.json")
@@ -61,7 +61,7 @@ func (generator Hera) Output(s *state.State) error {
 		}
 	}
 
-	if s.NPM.HasScript("storybook") {
+	if s.Node.HasScript("storybook") {
 		heraConfig.Services["storybook"] = &hera.Service{
 			Command: "npm run storybook",
 			Watch: []string{

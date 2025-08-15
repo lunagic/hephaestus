@@ -50,19 +50,19 @@ func (generator GitIgnore) Output(s *state.State) error {
 		})
 	}
 
-	if s.NPM.Enabled() {
+	if s.Node.Enabled() {
 		npmIgnores := []string{
 			"/node_modules/",
 		}
 
-		if s.NPM.HasDependency("typescript") {
+		if s.Node.HasDependency("typescript") {
 			npmIgnores = append(
 				npmIgnores,
 				"tsconfig.tsbuildinfo",
 			)
 		}
 
-		if s.NPM.HasDependency("next") {
+		if s.Node.HasDependency("next") {
 			npmIgnores = append(
 				npmIgnores,
 				"out",
@@ -74,6 +74,13 @@ func (generator GitIgnore) Output(s *state.State) error {
 		gitignore.Sections = append(gitignore.Sections, &formats.GitIgnoreSection{
 			Title: "npm",
 			Items: npmIgnores,
+		})
+	}
+
+	if len(s.Hephaestus.FrontendOutPaths) > 0 {
+		gitignore.Sections = append(gitignore.Sections, &formats.GitIgnoreSection{
+			Title: "Frontend Out Paths",
+			Items: s.Hephaestus.FrontendOutPaths,
 		})
 	}
 

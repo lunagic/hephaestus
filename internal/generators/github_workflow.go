@@ -47,13 +47,13 @@ func (generator GitHubWorkflow) Output(s *state.State) error {
 						)
 					}
 
-					if s.NPM.Enabled() {
+					if s.Node.Enabled() {
 						steps = append(
 							steps,
 							formats.GitHubWorkflowStep{
 								Uses: "actions/setup-node@v4",
 								With: map[string]string{
-									"node-version": "20",
+									"node-version": s.Node.Version(),
 								},
 							},
 						)

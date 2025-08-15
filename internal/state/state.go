@@ -2,7 +2,7 @@ package state
 
 type State struct {
 	Go         *Go
-	NPM        *NPM
+	Node       *Node
 	Hephaestus *Hephaestus
 }
 
@@ -28,7 +28,7 @@ func New() (*State, error) {
 	{
 		// Get NPM
 		var err error
-		if s.NPM, err = NewNPM(); err != nil {
+		if s.Node, err = NewNode(); err != nil {
 			return nil, err
 		}
 	}

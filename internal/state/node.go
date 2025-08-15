@@ -7,8 +7,8 @@ import (
 	"github.com/lunagic/hephaestus/internal/formats"
 )
 
-func NewNPM() (*NPM, error) {
-	s := &NPM{
+func NewNode() (*Node, error) {
+	s := &Node{
 		packageJSON: &formats.PackageJSON{},
 	}
 
@@ -22,22 +22,22 @@ func NewNPM() (*NPM, error) {
 	return s, nil
 }
 
-type NPM struct {
+type Node struct {
 	packageJSON *formats.PackageJSON
 }
 
-func (s *NPM) Enabled() bool {
+func (s *Node) Enabled() bool {
 	return s.packageJSON.ReadFromDisk() == nil
 }
 
-func (s *NPM) Version() string {
+func (s *Node) Version() string {
 	return s.packageJSON.NodeVersion()
 }
 
-func (s *NPM) HasScript(script string) bool {
+func (s *Node) HasScript(script string) bool {
 	return s.packageJSON.GetScript(script) != ""
 }
 
-func (s *NPM) HasDependency(packageName string) bool {
+func (s *Node) HasDependency(packageName string) bool {
 	return s.packageJSON.HasPackage(packageName)
 }

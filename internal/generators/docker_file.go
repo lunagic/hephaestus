@@ -15,27 +15,40 @@ func (generator Dockerfile) Output(s *state.State) error {
 
 	frontendCopyCommands := []string{}
 
-	if s.NPM.Enabled() {
+	if s.Node.Enabled() {
 		dockerfile.Stages = append(dockerfile.Stages, &formats.DockerStage{
 			Name:  "frontend_builder",
 			Image: "node",
-			Tag:   fmt.Sprintf("%s-alpine", s.NPM.Version()),
+			Tag:   fmt.Sprintf("%s-alpine", s.Node.Version()),
 			Commands: []string{
+				"RUN apk add --no-cache git",
 				"WORKDIR /workspace",
 				"COPY . .",
+				"RUN git clean -Xdff",
 				"RUN npm install",
 				"RUN npm run build",
 			},
 		})
+
+		if s.Hephaestus.StaticSitePath != "" {
+			frontendCopyCommands = append(
+				frontendCopyCommands,
+				fmt.Sprintf("COPY --from=frontend_builder /workspace/%s /workspace/", s.Hephaestus.StaticSitePath),
+			)
+		}
+		for _, p := range s.Hephaestus.FrontendOutPaths {
+			frontendCopyCommands = append(
+				frontendCopyCommands,
+				fmt.Sprintf("COPY --from=frontend_builder /workspace/%s /workspace/%s", p, p),
+			)
+		}
 	}
 
 	if s.Hephaestus.StaticSitePath != "" {
 		dockerfile.Stages = append(dockerfile.Stages, &formats.DockerStage{
-			Image: "ghcr.io/lunagic/poseidon",
-			Tag:   "latest",
-			Commands: []string{
-				fmt.Sprintf("COPY --from=frontend_builder /workspace/%s .", s.Hephaestus.StaticSitePath),
-			},
+			Image:    "ghcr.io/lunagic/poseidon",
+			Tag:      "latest",
+			Commands: frontendCopyCommands,
 		})
 	}
 

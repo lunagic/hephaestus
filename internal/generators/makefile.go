@@ -67,7 +67,7 @@ func (generator Makefile) Output(s *state.State) error {
 		m.Targets = append(m.Targets, parentTarget)
 		defaultTarget.BeforeTargets = append(defaultTarget.BeforeTargets, parentTarget.Name)
 
-		if s.NPM.Enabled() && s.NPM.HasScript("lint") {
+		if s.Node.Enabled() && s.Node.HasScript("lint") {
 			localTarget := &formats.MakefileTarget{
 				Name: "lint-npm",
 				Commands: []string{
@@ -103,7 +103,7 @@ func (generator Makefile) Output(s *state.State) error {
 		}
 		m.Targets = append(m.Targets, parentTarget)
 
-		if s.NPM.Enabled() && s.NPM.HasScript("fix") {
+		if s.Node.Enabled() && s.Node.HasScript("fix") {
 			localTarget := &formats.MakefileTarget{
 				Name: "fix-npm",
 				Commands: []string{
@@ -139,7 +139,7 @@ func (generator Makefile) Output(s *state.State) error {
 		m.Targets = append(m.Targets, parentTarget)
 		defaultTarget.BeforeTargets = append(defaultTarget.BeforeTargets, parentTarget.Name)
 
-		if s.NPM.Enabled() && s.NPM.HasScript("test") {
+		if s.Node.Enabled() && s.Node.HasScript("test") {
 			localTarget := &formats.MakefileTarget{
 				Name: "test-npm",
 				Commands: []string{
@@ -179,7 +179,7 @@ func (generator Makefile) Output(s *state.State) error {
 		m.Targets = append(m.Targets, parentTarget)
 		defaultTarget.BeforeTargets = append(defaultTarget.BeforeTargets, parentTarget.Name)
 
-		if s.NPM.Enabled() && s.NPM.HasScript("build") {
+		if s.Node.Enabled() && s.Node.HasScript("build") {
 			localTarget := &formats.MakefileTarget{
 				Name: "build-npm",
 				Commands: []string{
@@ -208,7 +208,7 @@ func (generator Makefile) Output(s *state.State) error {
 	}
 
 	{ // Dev Targets
-		if s.NPM.Enabled() && s.NPM.HasScript("build") {
+		if s.Node.Enabled() && s.Node.HasScript("build") {
 			localTarget := &formats.MakefileTarget{
 				Name: "dev-npm",
 				BeforeTargets: []string{
@@ -239,7 +239,7 @@ func (generator Makefile) Output(s *state.State) error {
 		}
 		m.Targets = append(m.Targets, parentTarget)
 
-		if s.NPM.Enabled() {
+		if s.Node.Enabled() {
 
 			if s.Go.Enabled() {
 				localTarget := &formats.MakefileTarget{
@@ -252,7 +252,7 @@ func (generator Makefile) Output(s *state.State) error {
 
 				m.Targets = append(m.Targets, localTarget)
 				parentTarget.BeforeTargets = append(parentTarget.BeforeTargets, localTarget.Name)
-			} else if s.NPM.HasScript("watch") {
+			} else if s.Node.HasScript("watch") {
 				localTarget := &formats.MakefileTarget{
 					Name: "watch-npm",
 					Commands: []string{
