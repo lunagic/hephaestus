@@ -67,6 +67,8 @@ func (generator Dockerfile) Output(s *state.State) error {
 				"WORKDIR /workspace",
 				"COPY --from=backend_builder /usr/local/bin/build /usr/local/bin/build",
 				`CMD [ "build" ]`,
+				"ENV HOST=0.0.0.0",
+				fmt.Sprintf("ENV PORT=%d", s.Hephaestus.DefaultPort),
 				fmt.Sprintf("EXPOSE %d", s.Hephaestus.DefaultPort),
 			},
 		})
