@@ -21,7 +21,7 @@ func (generator GitIgnore) Output(s *state.State) error {
 	gitignore.Sections = append(gitignore.Sections, &formats.GitIgnoreSection{
 		Title: "Temporary Files",
 		Items: []string{
-			"/tmp/",
+			"/.config/tmp/",
 		},
 	})
 
