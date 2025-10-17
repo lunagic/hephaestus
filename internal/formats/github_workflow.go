@@ -7,6 +7,8 @@ type GitHubWorkflow struct {
 }
 
 type GitHubWorkflowJob struct {
+	Needs  string               `yaml:"needs,omitempty"`
+	If     string               `yaml:"if,omitempty"`
 	RunsOn string               `yaml:"runs-on"`
 	Steps  []GitHubWorkflowStep `yaml:"steps"`
 }
@@ -16,8 +18,8 @@ type GitHubWorkflowEvent struct {
 }
 
 type GitHubWorkflowStep struct {
-	Name string            `yaml:"name,omitempty"`
-	Uses string            `yaml:"uses,omitempty"`
-	Run  string            `yaml:"run,omitempty"`
-	With map[string]string `yaml:"with,omitempty"`
+	Name string         `yaml:"name,omitempty"`
+	Uses string         `yaml:"uses,omitempty"`
+	Run  string         `yaml:"run,omitempty"`
+	With map[string]any `yaml:"with,omitempty"`
 }

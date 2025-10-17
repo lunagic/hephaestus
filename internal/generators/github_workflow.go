@@ -16,7 +16,7 @@ func (generator GitHubWorkflow) Output(s *state.State) error {
 	}
 
 	validateWorkflow := formats.GitHubWorkflow{
-		Name: "Validate",
+		Name: "Main",
 		On: map[string]formats.GitHubWorkflowEvent{
 			"pull_request": {},
 			"push": {
@@ -40,7 +40,7 @@ func (generator GitHubWorkflow) Output(s *state.State) error {
 							steps,
 							formats.GitHubWorkflowStep{
 								Uses: "actions/setup-go@v5",
-								With: map[string]string{
+								With: map[string]any{
 									"go-version": s.Go.Version(),
 								},
 							},
@@ -52,7 +52,7 @@ func (generator GitHubWorkflow) Output(s *state.State) error {
 							steps,
 							formats.GitHubWorkflowStep{
 								Uses: "actions/setup-node@v4",
-								With: map[string]string{
+								With: map[string]any{
 									"node-version": s.Node.Version(),
 								},
 							},
@@ -72,7 +72,41 @@ func (generator GitHubWorkflow) Output(s *state.State) error {
 		},
 	}
 
-	validateWorkflowFile, err := os.Create(".github/workflows/validate.yml")
+	if s.Hephaestus.DockerImage != "" {
+		validateWorkflow.Jobs["publish"] = formats.GitHubWorkflowJob{
+			Needs:  "validate",
+			If:     "github.ref == 'refs/heads/main'",
+			RunsOn: "ubuntu-latest",
+			Steps: []formats.GitHubWorkflowStep{
+				{
+					Uses: "actions/checkout@v4",
+				},
+
+				{
+					Uses: "docker/setup-buildx-action@v3",
+				},
+				{
+					Uses: "docker/login-action@v3",
+					With: map[string]any{
+						"registry": "ghcr.io",
+						"username": "${{ github.actor }}",
+						"password": "${{ secrets.GITHUB_TOKEN }}",
+					},
+				},
+				{
+					Uses: "docker/build-push-action@v5",
+					With: map[string]any{
+						"context":   ".",
+						"push":      true,
+						"platforms": "linux/amd64,linux/arm64",
+						"tags":      "ghcr.io/${{ github.repository }}:latest",
+					},
+				},
+			},
+		}
+	}
+
+	validateWorkflowFile, err := os.Create(".github/workflows/main.yml")
 	if err != nil {
 		return err
 	}
