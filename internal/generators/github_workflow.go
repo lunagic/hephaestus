@@ -2,6 +2,7 @@ package generators
 
 import (
 	"os"
+	"strings"
 
 	"github.com/lunagic/hephaestus/internal/formats"
 	"github.com/lunagic/hephaestus/internal/state"
@@ -81,7 +82,6 @@ func (generator GitHubWorkflow) Output(s *state.State) error {
 				{
 					Uses: "actions/checkout@v4",
 				},
-
 				{
 					Uses: "docker/setup-buildx-action@v3",
 				},
@@ -103,6 +103,29 @@ func (generator GitHubWorkflow) Output(s *state.State) error {
 					},
 				},
 			},
+		}
+
+		if s.Hephaestus.DockerDeploy == "dokploy" {
+			validateWorkflow.Jobs["deploy"] = formats.GitHubWorkflowJob{
+				Needs:  "publish",
+				If:     "github.ref == 'refs/heads/main'",
+				RunsOn: "ubuntu-latest",
+				Steps: []formats.GitHubWorkflowStep{
+					{
+						Env: map[string]string{
+							"DOKPLOY_URL":    "${{ secrets.DOKPLOY_URL }}",
+							"DOKPLOY_TOKEN":  "${{ secrets.DOKPLOY_TOKEN }}",
+							"DOKPLOY_APP_ID": "${{ secrets.DOKPLOY_APP_ID }}",
+						},
+						Run: strings.Join([]string{
+							`curl -X POST "$DOKPLOY_URL/api/application.deploy"`,
+							`-H "x-api-key: $DOKPLOY_TOKEN"`,
+							`-H "Content-Type: application/json"`,
+							`-d '{"applicationId": "'$DOKPLOY_APP_ID'", "title": "Triggered byGitHub Action"}'`,
+						}, " "),
+					},
+				},
+			}
 		}
 	}
 

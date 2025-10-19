@@ -18,8 +18,9 @@ type GitHubWorkflowEvent struct {
 }
 
 type GitHubWorkflowStep struct {
-	Name string         `yaml:"name,omitempty"`
-	Uses string         `yaml:"uses,omitempty"`
-	Run  string         `yaml:"run,omitempty"`
-	With map[string]any `yaml:"with,omitempty"`
+	Name string            `yaml:"name,omitempty"`
+	Uses string            `yaml:"uses,omitempty"`
+	Run  string            `yaml:"run,omitempty"`
+	With map[string]any    `yaml:"with,omitempty"`
+	Env  map[string]string `yaml:"env,omitempty"`
 }

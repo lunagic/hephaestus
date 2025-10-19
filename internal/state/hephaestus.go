@@ -22,6 +22,7 @@ func NewHephaestus() (*Hephaestus, error) {
 
 type Hephaestus struct {
 	DockerImage      string              `yaml:"docker_image"`
+	DockerDeploy     string              `yaml:"docker_deploy"`
 	StaticSitePath   string              `yaml:"static_site_path"`
 	DefaultPort      int                 `yaml:"default_port"`
 	Gitignore        []string            `yaml:"gitignore"`
