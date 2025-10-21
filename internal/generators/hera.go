@@ -39,7 +39,7 @@ func (generator Hera) Output(s *state.State) error {
 		heraConfig.Services["backend"] = &hera.Service{
 			Command: "make dev-go",
 			Watch:   watchPaths,
-			Exclude: []string{},
+			Exclude: s.Hephaestus.FrontendOutPaths,
 		}
 	}
 
@@ -47,7 +47,6 @@ func (generator Hera) Output(s *state.State) error {
 		watchPaths := []string{}
 		watchPaths = fileChecker(watchPaths, "Makefile")
 		watchPaths = fileChecker(watchPaths, "package.json")
-		watchPaths = fileChecker(watchPaths, "package-lock.json")
 		watchPaths = fileChecker(watchPaths, "tsconfig.json")
 		watchPaths = fileChecker(watchPaths, "vite.config.ts")
 		watchPaths = fileChecker(watchPaths, "main.tsx")
